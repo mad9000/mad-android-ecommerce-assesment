@@ -19,6 +19,6 @@ abstract class ViewModelModule {
 
     @Binds
     @ViewModelScoped
-   abstract fun bindRepository(catalogApiService: CatalogApiService) : ICatalogApiService
+   abstract fun bindApiService(catalogApiService: CatalogApiService) : ICatalogApiService
 
 }

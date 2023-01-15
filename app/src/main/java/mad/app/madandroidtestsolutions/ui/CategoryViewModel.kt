@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.exception.ApolloException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import mad.app.madandroidtestsolutions.R
 import mad.app.madandroidtestsolutions.service.catalog.ICatalogApiService
+import mad.app.madandroidtestsolutions.util.NetworkHelper
 import mad.app.plptest.CategoryQuery
 import mad.app.plptest.CategoryRootQuery
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(
     private val iCatalogApiService: ICatalogApiService,
+    networkHelper: NetworkHelper,
     application: Application,
 ) : AndroidViewModel(application) {
 
@@ -32,11 +35,15 @@ class CategoryViewModel @Inject constructor(
 
     var categoryProductResponse: MutableList<CategoryQuery.Item?>? = null
 
-    private var _dialogError: MutableLiveData<Any> =
-        MutableLiveData()
+    private var _networkDialog: MutableLiveData<String> = MutableLiveData()
+    val networkDialog: LiveData<String> = _networkDialog
 
     init {
-        subscribeToCategories()
+        if (networkHelper.isNetworkAvailable(application)) {
+            subscribeToCategories()
+        } else {
+            _networkDialog.value = application.getString(R.string.no_internet_connection_error)
+        }
     }
 
     fun subscribeToCategories() {
@@ -56,17 +63,20 @@ class CategoryViewModel @Inject constructor(
             _viewState.postValue(ViewState.Loading())
             try {
                 val productResult =
-                    iCatalogApiService.getProductsForCategory(categoryUUID ?: "", pageNumber = itemProductPaging, pageSize = 20)
-                itemProductPaging ++
+                    iCatalogApiService.getProductsForCategory(categoryUUID ?: "",
+                        pageNumber = itemProductPaging,
+                        pageSize = 20)
+                itemProductPaging++
                 if (categoryProductResponse == null) {
-                    categoryProductResponse = productResult?.items as MutableList<CategoryQuery.Item?>?
+                    categoryProductResponse =
+                        productResult?.items as MutableList<CategoryQuery.Item?>?
                 } else {
-                    val oldArticles = categoryProductResponse
-                    val newArticles =  productResult?.items
-                    newArticles?.let { oldArticles?.addAll(it) }
+                    val oldProduct = categoryProductResponse
+                    val newProduct = productResult?.items
+                    newProduct?.let { oldProduct?.addAll(it) }
                 }
                 _viewState.postValue(ViewState.Success(categoryProductResponse
-                    ?:  productResult?.items))
+                    ?: productResult?.items))
             } catch (ex: ApolloException) {
                 _viewState.postValue(ViewState.Error(ex.message))
             }

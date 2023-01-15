@@ -46,7 +46,7 @@ class CategoryAdapter :
 
         fun bindItems(item: CategoryQuery.Item?) {
             binding.apply {
-                categoryIcon.downloadImage("https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.parktownstores.co.za%2Fschoolwear%2Fu-primary-school-uniforms-u%2Fgeneraal-beyers%2Fgeneral-beyers-golf-t-shirt-10469&psig=AOvVaw1O08Bu0BLx1WAxAH9xMS5V&ust=1673874772101000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCLi7jMzTyfwCFQAAAAAdAAAAABAF")
+                categoryIcon.downloadImage("")
                 categoryItemName.text = item?.productListFragment?.name
                 categoryItemDescription.text = item?.productListFragment?.brand
                 categoryItemPrice.text = "R" +
@@ -59,6 +59,7 @@ class CategoryAdapter :
     }
 
     private var onItemClickListener: ((CategoryQuery.Item) -> Unit)? = null
+
     fun setOnItemClickListener(listener: (CategoryQuery.Item) -> Unit) {
         onItemClickListener = listener
     }

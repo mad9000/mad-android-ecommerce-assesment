@@ -9,6 +9,6 @@ import mad.app.madandroidtestsolutions.R
 fun ImageView.downloadImage(imageUrl: String?) {
     val options: RequestOptions =
         RequestOptions().centerCrop().diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.ic_place_holder).error(R.drawable.ic_baseline_error)
+            .placeholder(R.drawable.ic_place_holder).error(R.mipmap.ic_clothing)
     Glide.with(this).load(imageUrl).apply(options).into(this)
 }

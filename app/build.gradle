@@ -86,18 +86,10 @@ dependencies {
     // Optional - Integration with LiveData
     implementation 'androidx.compose.runtime:runtime-livedata'
 
-    // CircleIndicator
-    implementation 'me.relex:circleindicator:2.1.6'
-
     implementation "androidx.fragment:fragment-ktx:1.5.5"
 
     // Activity KTX for viewModels()
     implementation "androidx.activity:activity-ktx:1.6.1"
-
-// ViewPager2
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-
-    implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

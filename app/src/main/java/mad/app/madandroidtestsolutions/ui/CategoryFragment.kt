@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
+import mad.app.madandroidtestsolutions.R
 import mad.app.madandroidtestsolutions.databinding.CategoryFragmentBinding
 import mad.app.madandroidtestsolutions.ui.adapter.CategoryAdapter
 import mad.app.plptest.CategoryQuery
@@ -53,6 +56,10 @@ class CategoryFragment : Fragment() {
             }
         }
 
+        viewModel.networkDialog.observe(viewLifecycleOwner) {
+            showErrorDialog(it)
+        }
+
         _binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
@@ -71,7 +78,7 @@ class CategoryFragment : Fragment() {
         })
 
         productAdapter.setOnItemClickListener {
-
+            //TODO navigate to details screen
         }
     }
 
@@ -81,6 +88,17 @@ class CategoryFragment : Fragment() {
             adapter = productAdapter
             addOnScrollListener(this@CategoryFragment.scrollListener)
         }
+    }
+
+    private fun showErrorDialog(message: String) {
+        val dlg: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        dlg.setTitle(getString(R.string.attention))
+        dlg.setMessage(message)
+        dlg.setPositiveButton(
+            getString(R.string.close)
+        ) { _, _ ->
+            activity?.finish()
+        }.show()
     }
 
     private fun handleProductResults(product: CategoryViewModel.ViewState<List<CategoryQuery.Item?>?>) {
@@ -110,6 +128,7 @@ class CategoryFragment : Fragment() {
             is CategoryViewModel.ViewState.Error -> {
                 _binding.loader.hide()
                 isLoading = false
+                Toast.makeText(requireContext(), product.message, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -163,8 +182,8 @@ class CategoryFragment : Fragment() {
                 //Display loading indicator
             }
             is CategoryViewModel.ViewState.Error -> {
+                Toast.makeText(requireContext(), viewState.message, Toast.LENGTH_LONG).show()
                 Log.d("Error loading categories", viewState.message.toString())
-                //Display error message
             }
         }
     }
