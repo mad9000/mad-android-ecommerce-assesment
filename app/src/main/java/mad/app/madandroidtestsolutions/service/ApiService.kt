@@ -1,19 +1,19 @@
 package mad.app.madandroidtestsolutions.service
 
 import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo3.network.okHttpClient
 import mad.app.madandroidtestsolutions.service.catalog.CatalogApiService
 import mad.app.madandroidtestsolutions.service.catalog.ICatalogApiService
+import okhttp3.OkHttpClient
 
-class ApiService(val apolloClient: ApolloClient) : IApiService {
-    override val catalog: ICatalogApiService = CatalogApiService(apolloClient)
+class ApiService {
 
-    companion object {
-        fun createEcommerceClient() : IApiService {
-            val apolloClient: ApolloClient = ApolloClient.Builder()
-                .addHttpHeader("store", "app_en_za")
-                .serverUrl("https://apiprd.omni.mrpg.com/graphql")
-                .build()
-            return ApiService(apolloClient)
-        }
+    fun getApolloClient(): ApolloClient {
+        val okHttpClient = OkHttpClient.Builder().build()
+        return ApolloClient.Builder()
+            .addHttpHeader("store", "app_en_za")
+            .serverUrl("https://apiprd.omni.mrpg.com/graphql")
+            .okHttpClient(okHttpClient)
+            .build()
     }
 }
