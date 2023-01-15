@@ -43,7 +43,7 @@ class CategoryFragment : Fragment() {
 
         viewModel.catState.observe(viewLifecycleOwner) { categories ->
             categories?.let {
-                handleEventResults(it)
+                handleCategoryResults(it)
             }
         }
 
@@ -149,7 +149,7 @@ class CategoryFragment : Fragment() {
         }
     }
 
-    private fun handleEventResults(viewState: CategoryViewModel.ViewState<List<CategoryRootQuery.Child?>?>) {
+    private fun handleCategoryResults(viewState: CategoryViewModel.ViewState<List<CategoryRootQuery.Child?>?>) {
         when (viewState) {
             is CategoryViewModel.ViewState.Success -> {
                 viewState.data?.let { rootCategory ->
