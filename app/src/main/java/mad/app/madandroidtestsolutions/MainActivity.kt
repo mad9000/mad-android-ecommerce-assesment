@@ -1,75 +1,30 @@
 package mad.app.madandroidtestsolutions
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.Text
-import androidx.lifecycle.lifecycleScope
-import mad.app.madandroidtestsolutions.service.ApiService
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
+import androidx.navigation.ui.setupActionBarWithNavController
+import dagger.hilt.android.AndroidEntryPoint
+import mad.app.madandroidtestsolutions.databinding.ActivityMainBinding
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    val apiService = ApiService.createEcommerceClient()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        lifecycleScope.launchWhenResumed {
-
-            //First, we grab the root level categories from the e-commerce platform
-            val rootItems = apiService.catalog.fetchRootCategory()
-            Log.d("CatalogExample", "These are the root level Categories we have available:\n" +
-                    "${
-                        rootItems?.children
-                            ?.filterNotNull()
-                            ?.map {
-                                "${it.name} (uid: ${it.uid})"
-                            }
-                            ?.joinToString(separator = "\n")
-                    }"
-            )
-
-            //Lets grab the mens Category UUID and fetch the products for the first page
-            val mensCategoryId = rootItems
-                ?.children
-                ?.find { it?.name?.lowercase() == "mens" }
-                ?.uid
-
-            val firstPageMensCat = mensCategoryId?.let { catId ->
-                apiService.catalog.getCategory(categoryId = catId)
-            }
-
-            Log.d("CatalogExample",
-                "The first page of mens category with CatId ${mensCategoryId} has these products:\n" +
-                        "${
-                            firstPageMensCat?.data?.products?.items
-                                ?.map {
-                                    "${it?.name} (uid: ${it?.productListFragment?.uid}) and SKU ${it?.productListFragment?.sku}"
-                                }
-                                ?.joinToString(separator = "\n")
-                        }")
-
-
-            //Now lets fetch the first product from the first page of the Mens Category
-            val firstProductUid = firstPageMensCat?.let {
-                it.data?.products?.items?.firstOrNull()?.productListFragment?.uid
-            }
-
-            val firstProduct = firstProductUid?.let { uid ->
-                apiService.catalog?.getProduct(uid)
-            }
-
-            Log.d("CatalogExample",
-                "The first product is ${firstProduct?.productFragment?.name} with SKU ${firstProduct?.productFragment?.sku}\n" +
-                        "This product costs at least " +
-                        "R${firstProduct?.productFragment?.productListFragment?.price_range?.priceRangeFragment?.minimum_price?.final_price?.value}"
-            )
-
-        }
-
-        setContent {
-            Text("Hello World")
-        }
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
     }
 }
